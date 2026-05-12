@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+
+    <!-- 🔹 Title -->
+    <h2 class="text-2xl font-bold mb-2 text-center">
+        {{ title }}
+    </h2>
+
+    <!-- 🔹 Description -->
+    <p class="text-gray-600 text-center mb-4">
+        Request a loan. Maximum 3 approved loans allowed.
+    </p>
+
+    <!-- 🔹 Form -->
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Non-field errors -->
+        {% if form.non_field_errors %}
+            <div class="bg-red-200 text-red-800 p-2 rounded">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <!-- Amount -->
+        <div>
+            <label class="block font-semibold mb-1">
+                Loan Amount
+            </label>
+
+            {{ form.amount }}
+
+            {% if form.amount.errors %}
+                <p class="text-red-600 text-sm mt-1">
+                    {{ form.amount.errors }}
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Hidden transaction_type -->
+        {{ form.transaction_type }}
+
+        <!-- Submit Button -->
+        <button type="submit"
+                class="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700">
+            Request Loan
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

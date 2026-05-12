@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}My Loans{% endblock %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+```
+<!-- Page Header -->
+<div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">💰 My Loans</h2>
+</div>
+
+{% if loans %}
+
+<!-- Loan Cards -->
+<div class="grid gap-5">
+
+    {% for loan in loans %}
+    <div class="bg-white shadow-md rounded-xl p-5 border hover:shadow-lg transition">
+
+        <div class="flex justify-between items-center">
+
+            <!-- Left Side -->
+            <div>
+                <p class="text-gray-500 text-sm">Loan #{{ forloop.counter }}</p>
+
+                <p class="text-lg font-semibold text-blue-600">
+                    ৳ {{ loan.amount }}
+                </p>
+
+                <p class="text-sm text-gray-400">
+                    {{ loan.timestamp|date:"M d, Y" }}
+                </p>
+            </div>
+
+            <!-- Middle -->
+            <div class="text-center">
+                <p class="text-sm text-gray-500">Remaining</p>
+
+                {% if loan.loan_balance > 0 %}
+                    <p class="text-lg font-bold text-red-500">
+                        ৳ {{ loan.loan_balance }}
+                    </p>
+                {% else %}
+                    <p class="text-lg font-bold text-green-500">
+                        ৳ 0
+                    </p>
+                {% endif %}
+            </div>
+
+            <!-- Status -->
+            <div>
+                {% if loan.amount > 0 %}
+                    <span class="px-3 py-1 text-sm bg-yellow-200 text-yellow-800 rounded-full">
+                        Unpaid
+                    </span>
+                {% else %}
+                    <span class="px-3 py-1 text-sm bg-green-200 text-green-800 rounded-full">
+                        Paid
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- Action -->
+            <div>
+                {% if loan.amount > 0 %}
+                    <a href="{% url 'pay_loan' loan.id %}" 
+                       class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition">
+                       Pay Now
+                    </a>
+                {% else %}
+                    <button class="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg cursor-not-allowed">
+                        Paid
+                    </button>
+                {% endif %}
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% else %}
+    <div class="text-center bg-white p-6 rounded-lg shadow">
+        <p class="text-gray-600">No loan records found.</p>
+    </div>
+{% endif %}
+```
+
+</div>
+
+{% endblock %}

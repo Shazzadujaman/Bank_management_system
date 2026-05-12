@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bank System{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col">
+<!-- 🔷 Navbar -->
+<nav class="bg-blue-600 text-white shadow-md">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+
+        <a href="{% url 'home' %}" class="text-xl font-bold">Bank System</a>
+
+        <div class="space-x-3">
+
+            {% if user.is_authenticated %}
+                <!-- Logged in user menu -->
+                <a href="{% url 'deposit' %}" class="hover:underline">Deposit</a>
+                <a href="{% url 'withdraw' %}" class="hover:underline">Withdraw</a>
+                <a href="{% url 'loan_request' %}" class="hover:underline">Loan Request</a>
+                <a href="" class="hover:underline">Report</a>
+                <a href="" class="hover:underline">Profile</a>
+
+                <span class="font-semibold ml-2">Hi, {{ user.username }}</span>
+                <span class="font-semibold ml-2">Acc balance: ${{ user.account.balance|floatformat:2 }}</span>
+
+                <!-- ✅ Secure Logout -->
+                <form method="post" action="{% url 'logout' %}" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" 
+                        class="bg-red-500 px-3 py-1 rounded hover:bg-red-600 ml-2">
+                        Logout
+                    </button>
+                </form>
+
+            {% else %}
+                <!-- Guest menu -->
+                <a href="{% url 'login' %}" 
+                   class="bg-green-500 px-3 py-1 rounded hover:bg-green-600">
+                   Login
+                </a>
+
+                <a href="{% url 'registrations' %}" 
+                   class="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500">
+                   Signup
+                </a>
+            {% endif %}
+
+        </div>
+    </div>
+</nav>
+
+<!-- 🔔 Messages -->
+<div class="container mx-auto px-4 mt-4">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="mb-2 p-3 rounded 
+                {% if message.tags == 'success' %} bg-green-200 text-green-800
+                {% elif message.tags == 'error' %} bg-red-200 text-red-800
+                {% else %} bg-gray-200 text-gray-800 {% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<!-- 📄 Main Content -->
+<main class="flex-grow container mx-auto px-4 py-6">
+    {% block content %}
+    {% endblock %}
+</main>
+
+<!-- 🔻 Footer -->
+<footer class="bg-gray-800 text-white text-center py-3 mt-auto">
+    <p>&copy; 2026 Bank Management System</p>
+</footer>
+
+</body>
+</html>

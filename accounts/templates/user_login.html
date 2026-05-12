@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="flex justify-center items-center min-h-[70vh]">
+
+    <div class="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+
+        <h2 class="text-2xl font-bold text-center text-blue-600 mb-6">
+            Login to Your Account
+        </h2>
+
+        <!-- 🔐 Login Form -->
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1">Username</label>
+                <input type="text" name="username" 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                       required>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1">Password</label>
+                <input type="password" name="password" 
+                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                       required>
+            </div>
+
+            <!-- Errors -->
+            {% if form.errors %}
+                <div class="mb-4 text-red-600 text-sm">
+                    Invalid username or password.
+                </div>
+            {% endif %}
+
+            <!-- Submit -->
+            <button type="submit" 
+                    class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                Login
+            </button>
+        </form>
+
+        <!-- 🔗 Extra Links -->
+        <p class="text-center text-sm text-gray-600 mt-4">
+            Don’t have an account?
+            <a href="{% url 'registrations' %}" class="text-blue-500 hover:underline">
+                Sign up
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+{% endblock %}
