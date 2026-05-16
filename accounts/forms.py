@@ -51,3 +51,11 @@ class UserRegistrationForm(UserCreationForm):
            gender=gender,
         )
         return user
+     
+
+
+class OTPForm(forms.Form):
+
+    otp = forms.CharField(
+        max_length=6
+    )     

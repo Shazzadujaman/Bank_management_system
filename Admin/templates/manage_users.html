@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Manage Users
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto py-10">
+
+    <h1 class="text-3xl font-bold text-blue-600 mb-8">
+        Manage Users
+    </h1>
+
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
+
+        <table class="w-full">
+
+            <thead class="bg-gray-100">
+
+                <tr>
+
+                    <th class="p-4 text-left">Username</th>
+                    <th class="p-4 text-left">Account No</th>
+                    <th class="p-4 text-left">Balance</th>
+                    <th class="p-4 text-left">Status</th>
+                    <th class="p-4 text-left">Action</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for user in users %}
+
+                <tr class="border-t">
+
+                    <td class="p-4">
+                        {{ user.user.username }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ user.account_no }}
+                    </td>
+
+                    <td class="p-4">
+                        ৳ {{ user.balance }}
+                    </td>
+
+                    <td class="p-4">
+
+                        {% if user.is_frozen %}
+
+                            <span class="text-red-500 font-semibold">
+                                Frozen
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-green-500 font-semibold">
+                                Active
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="p-4">
+
+                        <a href="{% url 'freeze_account' user.id %}"
+                           class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">
+
+                            {% if user.is_frozen %}
+                                Unfreeze
+                            {% else %}
+                                Freeze
+                            {% endif %}
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

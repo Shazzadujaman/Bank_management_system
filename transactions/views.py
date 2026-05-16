@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from others.utils import create_notification
 from transactions.utils import send_transaction_email
 from .models import Transaction
 from .forms import DepositForm,WithdrawForm,LoanRequstForm
@@ -21,6 +22,7 @@ from .forms import TransferForm
 from accounts.models import UserBankAccount
 from django.db import transaction
 from django.views.generic import FormView
+
 
 class TransactionCreateMixin(LoginRequiredMixin,CreateView):
     model=Transaction
@@ -52,8 +54,18 @@ class DepositView(TransactionCreateMixin):
         return initial
     
     def form_valid(self, form):
+        
         amount=form.cleaned_data.get('amount')
         account=self.request.user.account
+
+        if account.is_frozen:
+
+            messages.error(
+               self.request,
+               'Your account is frozen.'
+            )
+
+            return redirect('home') 
         account.balance+=amount
         account.save(
             update_fields=['balance']
@@ -63,6 +75,10 @@ class DepositView(TransactionCreateMixin):
            amount,
           'Deposit'
        )  
+        create_notification(
+        self.request.user,
+        f'{amount} BDT deposited successfully.'
+       )
 
         messages.success(self.request,f"{amount}$ was deposited to your account successfully")
         return super().form_valid(form)
@@ -80,8 +96,17 @@ class WithdrawView(TransactionCreateMixin):
         return initial
     
     def form_valid(self, form):
+        
         amount=form.cleaned_data.get('amount')
         account=self.request.user.account
+        if account.is_frozen:
+
+           messages.error(
+           self.request,
+           'Your account is frozen.'
+           ) 
+
+           return redirect('home')
         account.balance-=amount
         account.save(
             update_fields=['balance']
@@ -101,6 +126,7 @@ class WithdrawView(TransactionCreateMixin):
 class LoanRequestView(TransactionCreateMixin):
     form_class=LoanRequstForm    
     title="Loan Request"
+    
 
     def get_initial(self):
         initial={'transaction_type': 3}
@@ -276,6 +302,16 @@ class TransferMoneyView(LoginRequiredMixin, FormView):
             "Money transferred successfully."
         )
 
+        create_notification(
+        sender_account.user,
+        f'{amount} BDT transferred successfully.'
+        )
+    
+        create_notification(
+        receiver_account.user,
+        f'You received {amount} BDT.'
+        )  
+        
         return super().form_valid(form)
 
 

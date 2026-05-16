@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}
+All Transactions
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto py-10">
+
+    <h1 class="text-3xl font-bold text-blue-600 mb-8">
+        All Transactions
+    </h1>
+
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
+
+        <table class="w-full">
+
+            <thead class="bg-gray-100">
+
+                <tr>
+
+                    <th class="p-4 text-left">User</th>
+                    <th class="p-4 text-left">Type</th>
+                    <th class="p-4 text-left">Amount</th>
+                    <th class="p-4 text-left">Balance</th>
+                    <th class="p-4 text-left">Date</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for transaction in transactions %}
+
+                <tr class="border-t">
+
+                    <td class="p-4">
+                        {{ transaction.account.user.username }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ transaction.get_transaction_type_display }}
+                    </td>
+
+                    <td class="p-4">
+                        ৳ {{ transaction.amount }}
+                    </td>
+
+                    <td class="p-4">
+                        ৳ {{ transaction.balance_after_transaction }}
+                    </td>
+
+                    <td class="p-4">
+                        {{ transaction.timestamp }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

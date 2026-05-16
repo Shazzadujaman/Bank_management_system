@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'accounts',
     'core',
     'transactions',
+    'others',
+    'Admin',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +76,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'others.context_processors.notification_context',
             ],
         },
     },

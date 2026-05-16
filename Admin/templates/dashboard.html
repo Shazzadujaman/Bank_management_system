@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Admin Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-7xl mx-auto py-10">
+
+    <h1 class="text-4xl font-bold text-blue-600 mb-8">
+        Admin Dashboard
+    </h1>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h2 class="text-gray-500">
+                Total Users
+            </h2>
+
+            <p class="text-3xl font-bold mt-2">
+                {{ total_users }}
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h2 class="text-gray-500">
+                Total Transactions
+            </h2>
+
+            <p class="text-3xl font-bold mt-2">
+                {{ total_transactions }}
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h2 class="text-gray-500">
+                Pending Loans
+            </h2>
+
+            <p class="text-3xl font-bold mt-2">
+                {{ pending_loans }}
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl shadow">
+            <h2 class="text-gray-500">
+                Total Bank Balance
+            </h2>
+
+            <p class="text-3xl font-bold mt-2">
+                ৳ {{ total_balance }}
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Quick Links -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+
+        <a href="{% url 'pending_loans' %}"
+           class="bg-blue-600 text-white p-6 rounded-2xl shadow hover:bg-blue-700">
+
+            Approve Loans
+
+        </a>
+
+        <a href="{% url 'manage_users' %}"
+           class="bg-green-600 text-white p-6 rounded-2xl shadow hover:bg-green-700">
+
+            Manage Users
+
+        </a>
+
+        <a href="{% url 'all_transactions' %}"
+           class="bg-purple-600 text-white p-6 rounded-2xl shadow hover:bg-purple-700">
+
+            All Transactions
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -23,4 +23,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('',HomeView.as_view(),name='home'),
     path('transactions/',include('transactions.urls')),
+    path('admin-panel/', include('Admin.urls')),
+    path('others/', include('others.urls')),
 ]

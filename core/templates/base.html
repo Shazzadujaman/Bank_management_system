@@ -8,78 +8,433 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body{
+            font-family: 'Poppins', sans-serif;
+        }
+    </style>
+
 </head>
 
 <body class="bg-gray-100 min-h-screen flex flex-col">
-<!-- 🔷 Navbar -->
-<nav class="bg-blue-600 text-white shadow-md">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
 
-        <a href="{% url 'home' %}" class="text-xl font-bold">Bank System</a>
+<!-- ================= NAVBAR ================= -->
+<nav class="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 shadow-lg sticky top-0 z-50">
 
-        <div class="space-x-3">
+    <div class="container mx-auto px-4">
+
+        <!-- Top Navbar -->
+        <div class="flex items-center justify-between h-16">
+
+            <!-- Logo -->
+            <a href="{% url 'home' %}"
+               class="text-xl md:text-2xl font-bold tracking-wide text-white flex items-center gap-2">
+
+                🏦 <span>Shakpara Bank PLC</span>
+
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-5 text-white">
+
+                {% if user.is_authenticated %}
+
+                    <a href="{% url 'deposit' %}"
+                       class="hover:text-yellow-300 transition">
+
+                        Deposit
+
+                    </a>
+
+                    <a href="{% url 'withdraw' %}"
+                       class="hover:text-yellow-300 transition">
+
+                        Withdraw
+
+                    </a>
+
+                    <a href="{% url 'loan_request' %}"
+                       class="hover:text-yellow-300 transition">
+
+                        Loan
+
+                    </a>
+
+                    <a href="{% url 'transaction_report' %}"
+                       class="hover:text-yellow-300 transition">
+
+                        Report
+
+                    </a>
+
+                    <!-- Balance -->
+                    <div class="bg-blue-900/40 border border-blue-700/40 rounded-full px-4 py-1">
+
+                        <span class="text-blue-200 text-sm">
+                            Balance:
+                        </span>
+
+                        <span class="font-semibold">
+                            ${{ user.account.balance|floatformat:2 }}
+                        </span>
+
+                    </div>
+
+                    <!-- Profile -->
+                    <a href="{% url 'profile' %}"
+                       class="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-xl transition">
+
+                        👤 Profile
+
+                    </a>
+
+                    <!-- Notification -->
+                    <div class="relative">
+
+                        <button id="notification-btn"
+                            class="relative bg-white/10 hover:bg-white/20 p-2 rounded-full">
+
+                            🔔
+
+                            {% if unread_notifications_count > 0 %}
+
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+
+                                    {{ unread_notifications_count }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div id="notification-menu"
+                            class="hidden absolute right-0 mt-3 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl overflow-hidden z-50">
+
+                            <div class="bg-blue-600 text-white px-4 py-3 font-semibold">
+
+                                Notifications
+
+                            </div>
+
+                            <div class="max-h-96 overflow-y-auto">
+
+                                {% for notification in notifications %}
+
+                                    <div class="p-4 border-b hover:bg-gray-100">
+
+                                        <p class="text-sm text-gray-700">
+
+                                            {{ notification.message }}
+
+                                        </p>
+
+                                        <p class="text-xs text-gray-400 mt-2">
+
+                                            {{ notification.created_at }}
+
+                                        </p>
+
+                                    </div>
+
+                                {% empty %}
+
+                                    <div class="p-6 text-center text-gray-500">
+
+                                        No notifications available
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Admin -->
+                    {% if request.user.is_superuser %}
+
+                        <a href="{% url 'Admin:admin_dashboard' %}"
+                           class="bg-yellow-400 text-black px-4 py-2 rounded-xl hover:bg-yellow-500">
+
+                            Admin
+
+                        </a>
+
+                    {% endif %}
+
+                    <!-- Logout -->
+                    <form method="post" action="{% url 'logout' %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                            class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-xl transition">
+
+                            Logout
+
+                        </button>
+
+                    </form>
+
+                {% else %}
+
+                    <a href="{% url 'login' %}"
+                       class="bg-green-500 hover:bg-green-600 px-5 py-2 rounded-xl">
+
+                        Login
+
+                    </a>
+
+                    <a href="{% url 'registrations' %}"
+                       class="bg-yellow-400 hover:bg-yellow-500 text-black px-5 py-2 rounded-xl">
+
+                        Signup
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn"
+                class="md:hidden text-white text-3xl">
+
+                ☰
+
+            </button>
+
+        </div>
+
+        <!-- ================= MOBILE MENU ================= -->
+
+        <div id="mobile-menu"
+            class="hidden md:hidden pb-5 text-white">
 
             {% if user.is_authenticated %}
-                <!-- Logged in user menu -->
-                <a href="{% url 'deposit' %}" class="hover:underline">Deposit</a>
-                <a href="{% url 'withdraw' %}" class="hover:underline">Withdraw</a>
-                <a href="{% url 'loan_request' %}" class="hover:underline">Loan Request</a>
-                <a href="" class="hover:underline">Report</a>
-                <a href="" class="hover:underline">Profile</a>
 
-                <span class="font-semibold ml-2">Hi, {{ user.username }}</span>
-                <span class="font-semibold ml-2">Acc balance: ${{ user.account.balance|floatformat:2 }}</span>
+                <div class="flex flex-col gap-4">
 
-                <!-- ✅ Secure Logout -->
-                <form method="post" action="{% url 'logout' %}" class="inline">
-                    {% csrf_token %}
-                    <button type="submit" 
-                        class="bg-red-500 px-3 py-1 rounded hover:bg-red-600 ml-2">
-                        Logout
-                    </button>
-                </form>
+                    <a href="{% url 'deposit' %}"
+                       class="hover:text-yellow-300">
+
+                        Deposit
+
+                    </a>
+
+                    <a href="{% url 'withdraw' %}"
+                       class="hover:text-yellow-300">
+
+                        Withdraw
+
+                    </a>
+
+                    <a href="{% url 'loan_request' %}"
+                       class="hover:text-yellow-300">
+
+                        Loan
+
+                    </a>
+
+                    <a href="{% url 'transaction_report' %}"
+                       class="hover:text-yellow-300">
+
+                        Report
+
+                    </a>
+
+                    <a href="{% url 'profile' %}"
+                       class="hover:text-yellow-300">
+
+                        Profile
+
+                    </a>
+
+                    <!-- Balance -->
+                    <div class="bg-blue-900/40 border border-blue-700/40 rounded-xl px-4 py-2 w-fit">
+
+                        Balance:
+                        ${{ user.account.balance|floatformat:2 }}
+
+                    </div>
+
+                    <!-- Admin -->
+                    {% if request.user.is_superuser %}
+
+                        <a href="{% url 'Admin:admin_dashboard' %}"
+                           class="bg-yellow-400 text-black px-4 py-2 rounded-xl w-fit">
+
+                            Admin Dashboard
+
+                        </a>
+
+                    {% endif %}
+
+                    <!-- Logout -->
+                    <form method="post" action="{% url 'logout' %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                            class="bg-red-500 px-4 py-2 rounded-xl">
+
+                            Logout
+
+                        </button>
+
+                    </form>
+
+                </div>
 
             {% else %}
-                <!-- Guest menu -->
-                <a href="{% url 'login' %}" 
-                   class="bg-green-500 px-3 py-1 rounded hover:bg-green-600">
-                   Login
-                </a>
 
-                <a href="{% url 'registrations' %}" 
-                   class="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500">
-                   Signup
-                </a>
+                <div class="flex flex-col gap-4 mt-4">
+
+                    <a href="{% url 'login' %}"
+                       class="bg-green-500 px-4 py-2 rounded-xl w-fit">
+
+                        Login
+
+                    </a>
+
+                    <a href="{% url 'registrations' %}"
+                       class="bg-yellow-400 text-black px-4 py-2 rounded-xl w-fit">
+
+                        Signup
+
+                    </a>
+
+                </div>
+
             {% endif %}
 
         </div>
+
     </div>
+
 </nav>
 
-<!-- 🔔 Messages -->
-<div class="container mx-auto px-4 mt-4">
+<!-- ================= MESSAGES ================= -->
+
+<div class="container mx-auto px-4 mt-5">
+
     {% if messages %}
+
         {% for message in messages %}
-            <div class="mb-2 p-3 rounded 
-                {% if message.tags == 'success' %} bg-green-200 text-green-800
-                {% elif message.tags == 'error' %} bg-red-200 text-red-800
-                {% else %} bg-gray-200 text-gray-800 {% endif %}">
+
+            <div class="mb-3 px-5 py-4 rounded-xl shadow-md border-l-4
+
+                {% if message.tags == 'success' %}
+                    bg-green-100 text-green-800 border-green-500
+
+                {% elif message.tags == 'error' %}
+                    bg-red-100 text-red-800 border-red-500
+
+                {% else %}
+                    bg-gray-100 text-gray-800 border-gray-500
+
+                {% endif %}">
+
                 {{ message }}
+
             </div>
+
         {% endfor %}
+
     {% endif %}
+
 </div>
 
-<!-- 📄 Main Content -->
-<main class="flex-grow container mx-auto px-4 py-6">
+<!-- ================= MAIN CONTENT ================= -->
+
+<main class="flex-grow container mx-auto px-4 py-8">
+
     {% block content %}
     {% endblock %}
+
 </main>
 
-<!-- 🔻 Footer -->
-<footer class="bg-gray-800 text-white text-center py-3 mt-auto">
-    <p>&copy; 2026 Bank Management System</p>
+<!-- ================= FOOTER ================= -->
+
+<footer class="bg-gray-900 text-gray-300 py-5 mt-auto">
+
+    <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-3">
+
+        <p class="text-sm">
+
+            © 2026 Shakpara Bank PLC. All rights reserved.
+
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-4 text-sm">
+
+            <a href="#" class="hover:text-white">
+                Privacy Policy
+            </a>
+
+            <a href="#" class="hover:text-white">
+                Terms
+            </a>
+
+            <a href="#" class="hover:text-white">
+                Support
+            </a>
+
+        </div>
+
+    </div>
+
 </footer>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+    // Notification Dropdown
+    const btn = document.getElementById('notification-btn');
+
+    const menu = document.getElementById('notification-menu');
+
+    if(btn){
+
+        btn.addEventListener('click', () => {
+
+            menu.classList.toggle('hidden');
+
+        });
+
+        window.addEventListener('click', function(e){
+
+            if(!btn.contains(e.target) && !menu.contains(e.target)){
+
+                menu.classList.add('hidden');
+
+            }
+
+        });
+
+    }
+
+    // Mobile Menu
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileBtn.addEventListener('click', () => {
+
+        mobileMenu.classList.toggle('hidden');
+
+    });
+
+</script>
 
 </body>
 </html>

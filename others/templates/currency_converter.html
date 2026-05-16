@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Currency Converter
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-xl mx-auto bg-white shadow-2xl rounded-3xl p-8 mt-10">
+
+    <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">
+
+        💱 Live Currency Converter
+
+    </h1>
+
+    <form method="post" class="space-y-6">
+
+        {% csrf_token %}
+
+        <div>
+
+            <label class="block mb-2 font-semibold">
+                Amount
+            </label>
+
+            {{ form.amount }}
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+
+            <div>
+
+                <label class="block mb-2 font-semibold">
+                    From
+                </label>
+
+                {{ form.from_currency }}
+
+            </div>
+
+            <div>
+
+                <label class="block mb-2 font-semibold">
+                    To
+                </label>
+
+                {{ form.to_currency }}
+
+            </div>
+
+        </div>
+
+        <button type="submit"
+            class="w-full bg-blue-600 text-white py-3 rounded-xl hover:bg-blue-700">
+
+            Convert
+
+        </button>
+
+    </form>
+
+    {% if converted_amount %}
+
+        <div class="mt-8 bg-green-100 p-6 rounded-2xl text-center">
+
+            <h2 class="text-2xl font-bold text-green-700">
+
+                Converted Amount
+
+            </h2>
+
+            <p class="text-4xl font-bold mt-4">
+
+                {{ converted_amount }}
+
+            </p>
+
+            <p class="mt-2 text-gray-600">
+
+                Exchange Rate: {{ rate }}
+
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
